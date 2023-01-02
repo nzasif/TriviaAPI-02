@@ -10,6 +10,7 @@ from models import setup_db, db, Question, Category
 
 QUESTIONS_PER_PAGE = 10
 
+# pagination setup
 def paginate_questions(request, selection):
     page = request.args.get('page', 1, type=int)
     start = (page - 1) * QUESTIONS_PER_PAGE
@@ -20,7 +21,6 @@ def paginate_questions(request, selection):
     return current_questions
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(__name__)
     setup_db(app)
 
@@ -133,6 +133,7 @@ def create_app(test_config=None):
         except Exception:
             abort(422)
 
+    # get questions of a specific category
     @app.route('/categories/<int:category_id>/questions')
     def category_questions(category_id):
         try:
@@ -153,6 +154,7 @@ def create_app(test_config=None):
         except:
             abort(404)
 
+    # start the quizz
     @app.route('/quizzes', methods=['POST'])
     def start_trivia():
         try:
@@ -177,6 +179,8 @@ def create_app(test_config=None):
             })
         except:
             abort(422)
+
+    # Error handler
     @app.errorhandler(404)
     def not_found(error):
         return( 
