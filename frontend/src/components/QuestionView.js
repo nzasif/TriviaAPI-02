@@ -3,7 +3,6 @@ import '../stylesheets/App.css';
 import Question from './Question';
 import Search from './Search';
 import $ from 'jquery';
-
 class QuestionView extends Component {
   constructor() {
     super();
@@ -22,9 +21,11 @@ class QuestionView extends Component {
 
   getQuestions = () => {
     $.ajax({
-      url: `/questions?page=${this.state.page}`, //TODO: update request URL
+      url: `http://127.0.0.1:5000/questions?page=${this.state.page}`, //TODO: update request URL
       type: 'GET',
+      crossDomain: true,
       success: (result) => {
+        console.log(result);
         this.setState({
           questions: result.questions,
           totalQuestions: result.total_questions,
@@ -65,8 +66,9 @@ class QuestionView extends Component {
 
   getByCategory = (id) => {
     $.ajax({
-      url: `/categories/${id}/questions`, //TODO: update request URL
+      url: `http://127.0.0.1:5000/categories/${id}/questions`, //TODO: update request URL
       type: 'GET',
+      crossDomain: true,
       success: (result) => {
         this.setState({
           questions: result.questions,
@@ -84,14 +86,14 @@ class QuestionView extends Component {
 
   submitSearch = (searchTerm) => {
     $.ajax({
-      url: `/questions`, //TODO: update request URL
+      url: `http://127.0.0.1:5000/questions`, //TODO: update request URL
       type: 'POST',
       dataType: 'json',
       contentType: 'application/json',
       data: JSON.stringify({ searchTerm: searchTerm }),
-      xhrFields: {
-        withCredentials: true,
-      },
+      // xhrFields: {
+      //   withCredentials: true,
+      // },
       crossDomain: true,
       success: (result) => {
         this.setState({
@@ -112,7 +114,7 @@ class QuestionView extends Component {
     if (action === 'DELETE') {
       if (window.confirm('are you sure you want to delete the question?')) {
         $.ajax({
-          url: `/questions/${id}`, //TODO: update request URL
+          url: `http://127.0.0.1:5000/questions/${id}`, //TODO: update request URL
           type: 'DELETE',
           success: (result) => {
             this.getQuestions();

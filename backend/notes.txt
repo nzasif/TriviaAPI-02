@@ -1,2 +1,7 @@
 $env:FLASK_APP = "flaskr"
 flask run
+
+python -m venv c:\path\to\myenv
+
+pip3 freeze > requirements.txt  # Python3
+pip freeze > requirements.txt  # Python2
