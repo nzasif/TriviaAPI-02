@@ -1,7 +1,7 @@
 # API DOCUMENTATION FOR TRIVIA API
 
 
-`GET '/api/v2.0/categories'`
+`GET '/api/v1.0/categories'`
 > get request
 - Fetches a dictionary of categories in which the keys are the ids and the value is the corresponding string of the category
 - Request Arguments: None
@@ -41,7 +41,7 @@
 
 `GET '/questions?page=${integer}'`
 
-- Fetches a paginated set of questions, a total number of questions, all categories and current category string.
+- Get a paginated set of questions, total number of questions, all categories and current category string.
 - Request Arguments: `page` - integer
 - Returns: An object with 10 paginated questions
 
@@ -50,10 +50,10 @@
   "questions": [
     {
       "id": 1,
-      "question": "CNS stands for ___ ?",
-      "answer": "central nerve system",
-      "difficulty": 5,
-      "category": 2
+      "question": "PNS stands for ___ ?",
+      "answer": "perepheral nerve system",
+      "difficulty": 3,
+      "category": 1
     }
   ],
   "totalQuestions": 100,
@@ -65,7 +65,7 @@
     "5": "Entertainment",
     "6": "Sports"
   },
-  "currentCategory": "History"
+  "currentCategory": "Science"
 }
 ```
 
@@ -109,8 +109,8 @@
 
 ```json
 {
-    'previous_questions': [1, 4, 20, 15]
-    quiz_category': 'current category'
+    "previous_questions": "[1, 4, 20, 15]",
+    "quiz_category": "current category"
  }
 ```
 
@@ -132,30 +132,30 @@
 
 `POST '/questions'`
 
-- Sends a post request in order to add a new question
+- Sends a post request for adding new question
 - Request Body:
 
 ```json
 {
   "question": "Heres a new question string",
-  "answer": "Heres a new answer string",
+  "answer": "Here is a new answer string",
   "difficulty": 1,
   "category": 3
 }
 ```
 
-- Returns: Does not return any new data
+- Returns: return updated questions
 
 ---
 
-`POST '/questions'`
+`POST '/search'`
 
 - Sends a post request in order to search for a specific question by search term
 - Request Body:
 
 ```json
 {
-  "searchTerm": "this is the term the user is looking for"
+  "searchTerm": "this is a search term"
 }
 ```
 
