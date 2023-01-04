@@ -24,6 +24,7 @@ def get_paginated_qs(request, qsQuery):
     
     return current_qs
 
+# this is a factory method, which create and return flask app
 def create_app(test_config=None):
     app = Flask(__name__)
     setup_db(app)
@@ -56,24 +57,27 @@ def create_app(test_config=None):
     @app.route('/questions')
     def get_trivia_questions():
 
-        qsQuery = Question.query.order_by(Question.id).all()
+        try:
+            qsQuery = Question.query.order_by(Question.id).all()
 
-        current_qs = get_paginated_qs(request, qsQuery)
+            current_qs = get_paginated_qs(request, qsQuery)
 
-        all_categories = Category.query.all()
+            all_categories = Category.query.all()
 
-        total_qs = len(qsQuery)
+            total_qs = len(qsQuery)
 
-        if total_qs == 0:
-            abort(404)
+            if total_qs == 0:
+                abort(404)
 
-        return jsonify({
-            'success': True,
-            'questions': current_qs,
-            'total_questions': total_qs,
-            'current_category': [],
-            'categories': [cat.type for cat in all_categories],
-        }), 200
+            return jsonify({
+                'success': True,
+                'questions': current_qs,
+                'total_questions': total_qs,
+                'current_category': [],
+                'categories': [cat.type for cat in all_categories],
+            }), 200
+        except:
+            bad_request(400)
 
     # remove question by id
     @app.route('/questions/<int:question_id>', methods=['DELETE'])
@@ -107,6 +111,10 @@ def create_app(test_config=None):
     # POST a new question, and return new paginated list of questions
     @app.route('/questions', methods=['POST'])
     def add_new_question():
+        # try:
+
+        # except:
+        #     bad_request()
 
         # get json from the request body
         req_body = request.get_json()
@@ -149,19 +157,23 @@ def create_app(test_config=None):
     #####################################################################
     @app.route('/search')
     def search_question():
-        req_body = request.get_json()
-        search = req_body.get('searchTerm', None)
+        try:
+            req_body = request.get_json()
+            search = req_body.get('searchTerm', None)
 
-        if search:
-            qs = Question.query.filter(Question.question.ilike(f'%{search}%')).all()
-            current_qs = [question.format() for question in qs]
-            total_qs = len(current_qs)
+            if search:
+                qs = Question.query.filter(Question.question.ilike(f'%{search}%')).all()
+                current_qs = [question.format() for question in qs]
+                total_qs = len(current_qs)
 
-            return jsonify({
-                'success': True,
-                'questions': current_qs,
-                'total_questions': total_qs,
-            })           
+                return jsonify({
+                    'success': True,
+                    'questions': current_qs,
+                    'total_questions': total_qs,
+                })           
+        except:
+            bad_request(400)
+            
     # get questions of a specific category
     @app.route('/categories/<int:cat_id>/questions')
     def questions_in_cat(cat_id):
@@ -215,7 +227,7 @@ def create_app(test_config=None):
         except:
             abort(422)
 
-    # Error handler
+    # 404 Error handler
     @app.errorhandler(404)
     def not_found(error):
         return( 
@@ -223,13 +235,15 @@ def create_app(test_config=None):
             404
         )
     
+    # 422 error handler
     @app.errorhandler(422)
-    def unprocessed(error):
+    def un_processed(error):
         return(
             jsonify({'success': False, 'error': 422,'message': 'your request cannot be processed'}),
             422
         )
 
+    # 400 error handler
     @app.errorhandler(400)
     def bad_request(error):
         return(
@@ -237,8 +251,9 @@ def create_app(test_config=None):
             400
         )
 
+    # this is 405 error handler
     @app.errorhandler(405)
-    def not_allowed(error):
+    def method_not_allowed(error):
         return(
             jsonify({'success': False, 'error': 405,'message': 'this method is not alllowed'}),
             405
